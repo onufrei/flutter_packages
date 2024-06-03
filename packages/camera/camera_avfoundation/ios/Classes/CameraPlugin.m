@@ -120,6 +120,15 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
         [[NSMutableArray alloc] initWithCapacity:devices.count];
     for (AVCaptureDevice *device in devices) {
       FCPPlatformCameraLensDirection lensFacing;
+      FCPPlatformCameraZoomType zoomType;
+      switch (device.deviceType) {
+          case AVCaptureDeviceTypeBuiltInUltraWideCamera:
+              zoomType = FCPPlatformCameraZoomTypeUltrawide;
+          case AVCaptureDeviceTypeBuiltInTelephotoCamera:
+              zoomType = FCPPlatformCameraZoomTypeTelephoto;
+          default:
+              zoomType = FCPPlatformCameraZoomTypeWide;
+      }
       switch (device.position) {
         case AVCaptureDevicePositionBack:
           lensFacing = FCPPlatformCameraLensDirectionBack;
@@ -132,6 +141,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
           break;
       }
       [reply addObject:[FCPPlatformCameraDescription makeWithName:device.uniqueID
+                                                         zoomType: zoomtype
                                                     lensDirection:lensFacing]];
     }
     completion(reply, nil);

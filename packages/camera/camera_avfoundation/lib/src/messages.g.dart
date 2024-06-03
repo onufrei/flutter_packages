@@ -59,6 +59,12 @@ enum PlatformFlashMode {
   torch,
 }
 
+enum PlatformCameraZoomType {
+  wide,
+  telephoto,
+  ultrawide,
+}
+
 enum PlatformFocusMode {
   auto,
   locked,
@@ -87,11 +93,14 @@ enum PlatformResolutionPreset {
 class PlatformCameraDescription {
   PlatformCameraDescription({
     required this.name,
+    required this.zoomType,
     required this.lensDirection,
   });
 
   /// The name of the camera device.
   String name;
+
+  PlatformCameraZoomType zoomType;
 
   /// The direction the camera is facing.
   PlatformCameraLensDirection lensDirection;
@@ -99,6 +108,7 @@ class PlatformCameraDescription {
   Object encode() {
     return <Object?>[
       name,
+      zoomType.index,
       lensDirection.index,
     ];
   }
@@ -107,7 +117,8 @@ class PlatformCameraDescription {
     result as List<Object?>;
     return PlatformCameraDescription(
       name: result[0]! as String,
-      lensDirection: PlatformCameraLensDirection.values[result[1]! as int],
+      type: PlatformCameraLensDirection.values[result[1]! as int],
+      lensDirection: PlatformCameraLensDirection.values[result[2]! as int],
     );
   }
 }

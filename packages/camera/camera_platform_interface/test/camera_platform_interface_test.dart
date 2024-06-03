@@ -160,6 +160,7 @@ void main() {
         () => cameraPlatform.createCamera(
           const CameraDescription(
             name: 'back',
+            zoomType: CameraZoomType.wide,
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
@@ -175,6 +176,7 @@ void main() {
       // Arrange
       const CameraDescription cameraDescription = CameraDescription(
         name: 'back',
+        zoomType: CameraZoomType.wide,
         lensDirection: CameraLensDirection.back,
         sensorOrientation: 0,
       );
@@ -502,6 +504,7 @@ void main() {
     test('CameraDescription is exported', () {
       const CameraDescription(
           name: 'abc-123',
+          zoomType: CameraZoomType.wide,
           sensorOrientation: 1,
           lensDirection: CameraLensDirection.external);
     });
