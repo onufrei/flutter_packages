@@ -303,6 +303,7 @@ void main() {
           (returnData[i] as Map<dynamic, dynamic>).cast<String, Object?>();
       final CameraDescription cameraDescription = CameraDescription(
         name: typedData['name']! as String,
+        zoomType: CameraZoomType.wide,
         lensDirection: (typedData['lensFacing']! as String) == 'front'
             ? CameraLensDirection.front
             : CameraLensDirection.back,
@@ -320,6 +321,7 @@ void main() {
     const int testSensorOrientation = 90;
     const CameraDescription testCameraDescription = CameraDescription(
         name: 'cameraName',
+        zoomType: CameraZoomType.wide,
         lensDirection: testLensDirection,
         sensorOrientation: testSensorOrientation);
 
@@ -449,6 +451,7 @@ void main() {
     const int testSensorOrientation = 90;
     const CameraDescription testCameraDescription = CameraDescription(
         name: 'cameraName',
+        zoomType: CameraZoomType.wide,
         lensDirection: testLensDirection,
         sensorOrientation: testSensorOrientation);
     const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
@@ -552,6 +555,7 @@ void main() {
     const int testSensorOrientation = 90;
     const CameraDescription testCameraDescription = CameraDescription(
         name: 'cameraName',
+        zoomType: CameraZoomType.wide,
         lensDirection: testLensDirection,
         sensorOrientation: testSensorOrientation);
     const bool enableAudio = true;
@@ -646,6 +650,7 @@ void main() {
     const int testSensorOrientation = 180;
     const CameraDescription testCameraDescription = CameraDescription(
         name: 'cameraName',
+        zoomType: CameraZoomType.wide,
         lensDirection: testLensDirection,
         sensorOrientation: testSensorOrientation);
     const bool enableAudio = true;
@@ -728,6 +733,7 @@ void main() {
     const int testSensorOrientation = 90;
     const CameraDescription testCameraDescription = CameraDescription(
         name: 'cameraName',
+        zoomType: CameraZoomType.wide,
         lensDirection: testLensDirection,
         sensorOrientation: testSensorOrientation);
     const bool enableAudio = true;
@@ -829,6 +835,7 @@ void main() {
     const int testSensorOrientation = 90;
     const CameraDescription testCameraDescription = CameraDescription(
         name: 'cameraName',
+        zoomType: CameraZoomType.wide,
         lensDirection: testLensDirection,
         sensorOrientation: testSensorOrientation);
     const bool enableAudio = true;
@@ -910,6 +917,7 @@ void main() {
     const int testSensorOrientation = 90;
     const CameraDescription testCameraDescription = CameraDescription(
         name: 'cameraName',
+        zoomType: CameraZoomType.wide,
         lensDirection: testLensDirection,
         sensorOrientation: testSensorOrientation);
     const int resolutionWidth = 350;
@@ -1756,6 +1764,7 @@ void main() {
 
       await camera.setDescriptionWhileRecording(const CameraDescription(
           name: 'fakeCameraName',
+          zoomType: CameraZoomType.wide,
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 90));
       verifyNoMoreInteractions(camera.processCameraProvider);

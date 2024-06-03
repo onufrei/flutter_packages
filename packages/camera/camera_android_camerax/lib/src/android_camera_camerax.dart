@@ -273,6 +273,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       // camera name: https://github.com/flutter/flutter/issues/147545.
       cameraDescriptions.add(CameraDescription(
           name: cameraName,
+          zoomType: CameraZoomType.wide,
           lensDirection: cameraLensDirection,
           sensorOrientation: cameraSensorOrientation));
     }
