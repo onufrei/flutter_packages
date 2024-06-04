@@ -117,7 +117,7 @@ class PlatformCameraDescription {
     result as List<Object?>;
     return PlatformCameraDescription(
       name: result[0]! as String,
-      type: PlatformCameraLensDirection.values[result[1]! as int],
+      zoomType: PlatformCameraZoomType.values[result[1]! as int],
       lensDirection: PlatformCameraLensDirection.values[result[2]! as int],
     );
   }

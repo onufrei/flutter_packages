@@ -9,6 +9,7 @@ import android.graphics.SurfaceTexture;
 import android.util.Size;
 import android.view.Surface;
 import androidx.annotation.NonNull;
+import androidx.camera.core.CameraFilter;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;

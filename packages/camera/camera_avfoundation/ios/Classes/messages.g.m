@@ -173,6 +173,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList {
   return @[
     self.name ?: [NSNull null],
+    @(self.zoomType),
     @(self.lensDirection),
   ];
 }
