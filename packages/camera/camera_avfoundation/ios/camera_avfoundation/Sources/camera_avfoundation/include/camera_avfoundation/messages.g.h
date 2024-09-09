@@ -22,6 +22,12 @@ typedef NS_ENUM(NSUInteger, FCPPlatformCameraLensDirection) {
   FCPPlatformCameraLensDirectionExternal = 2,
 };
 
+typedef NS_ENUM(NSUInteger, FCPPlatformCameraZoomType) {
+FCPPlatformCameraZoomTypeWide = 0,
+FCPPlatformCameraZoomTypeTelephoto = 1,
+FCPPlatformCameraZoomTypeUltrawide = 2,
+};
+
 /// Wrapper for FCPPlatformCameraLensDirection to allow for nullability.
 @interface FCPPlatformCameraLensDirectionBox : NSObject
 @property(nonatomic, assign) FCPPlatformCameraLensDirection value;
@@ -124,9 +130,13 @@ typedef NS_ENUM(NSUInteger, FCPPlatformResolutionPreset) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithName:(NSString *)name
+                    zoomType:(FCPPlatformCameraZoomType)zoomType
+                   zoomValue:(double)zoomValue
                lensDirection:(FCPPlatformCameraLensDirection)lensDirection;
 /// The name of the camera device.
 @property(nonatomic, copy) NSString *name;
+@property(nonatomic, assign) FCPPlatformCameraZoomType zoomType;
+@property(nonatomic, assign) double zoomValue;
 /// The direction the camera is facing.
 @property(nonatomic, assign) FCPPlatformCameraLensDirection lensDirection;
 @end

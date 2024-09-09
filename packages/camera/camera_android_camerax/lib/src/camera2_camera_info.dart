@@ -48,6 +48,9 @@ class Camera2CameraInfo extends JavaObject {
   Future<int> getSupportedHardwareLevel() =>
       _api.getSupportedHardwareLevelFromInstance(this);
 
+  Future<double> getSupportedMinZoomRatio() =>
+      _api.getSupportedMinZoomRatioFromInstance(this);
+
   /// Gets the camera ID.
   ///
   /// The ID may change based on the internal configuration of the camera to which
@@ -89,6 +92,11 @@ class _Camera2CameraInfoHostApiImpl extends Camera2CameraInfoHostApi {
       Camera2CameraInfo instance) {
     final int? identifier = instanceManager.getIdentifier(instance);
     return getSupportedHardwareLevel(identifier!);
+  }
+
+  Future<double> getSupportedMinZoomRatioFromInstance(Camera2CameraInfo instance) {
+    final int? identifier = instanceManager.getIdentifier(instance);
+    return getSupportedMinZoomRatio(identifier!);
   }
 
   Future<String> getCameraIdFromInstance(Camera2CameraInfo instance) {

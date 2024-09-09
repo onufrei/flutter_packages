@@ -271,10 +271,8 @@ class AndroidCameraCameraX extends CameraPlatform {
         await processCameraProvider!.getAvailableCameraInfos();
 
     CameraLensDirection? cameraLensDirection;
-    int cameraCount = 0;
     int? cameraSensorOrientation;
-    String? cameraName;
-
+    
     for (final CameraInfo cameraInfo in cameraInfos) {
       // Determine the lens direction by filtering the CameraInfo
       // TODO(gmackall): replace this with call to CameraInfo.getLensFacing when changes containing that method are available
@@ -294,15 +292,35 @@ class AndroidCameraCameraX extends CameraPlatform {
       }
 
       cameraSensorOrientation = await cameraInfo.getSensorRotationDegrees();
-      cameraName = 'Camera $cameraCount';
-      cameraCount++;
 
-      // TODO(camsim99): Use camera ID retrieved from Camera2CameraInfo as
-      // camera name: https://github.com/flutter/flutter/issues/147545.
+      final camera2Info = await Camera2CameraInfo.from(cameraInfo);
+      final minZoom = await camera2Info.getSupportedMinZoomRatio();
+
+      final CameraZoomType zoomType;
+      if (minZoom < 1) {
+        zoomType = CameraZoomType.ultrawide;
+      } else if (minZoom > 1) {
+        zoomType = CameraZoomType.telephoto;
+      } else {
+        zoomType = CameraZoomType.wide;
+      }
+
       cameraDescriptions.add(CameraDescription(
-          name: cameraName,
+          name: await camera2Info.getCameraId(),
+          zoomType: zoomType,
+          zoomValue: (minZoom * 10).roundToDouble() / 10,
           lensDirection: cameraLensDirection,
           sensorOrientation: cameraSensorOrientation));
+    }
+
+    final frontCameras = cameraDescriptions.where((e) => e.lensDirection == CameraLensDirection.front);
+    if (frontCameras.length == 1 && frontCameras.first.zoomValue < 1) {
+      cameraDescriptions.add(_zoomedOutCameraDescription(frontCameras.first));
+    }
+
+    final backCameras = cameraDescriptions.where((e) => e.lensDirection == CameraLensDirection.back);
+    if (backCameras.length == 1 && backCameras.first.zoomValue < 1) {
+      cameraDescriptions.add(_zoomedOutCameraDescription(backCameras.first));
     }
 
     return cameraDescriptions;
@@ -1171,6 +1189,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
     return cameraImageDataStreamController!.stream;
   }
+  
+  // Copy of the CameraDescription with identity zoom
+  CameraDescription _zoomedOutCameraDescription(CameraDescription description) => CameraDescription(
+      name: description.name,
+      zoomType: CameraZoomType.wide,
+      zoomValue: 1.0,
+      lensDirection: description.lensDirection,
+      sensorOrientation: description.sensorOrientation
+  );
 
   // Methods for binding UseCases to the lifecycle of the camera controlled
   // by a ProcessCameraProvider instance:

@@ -73,6 +73,8 @@ class MethodChannelCamera extends CameraPlatform {
       return cameras.map((Map<dynamic, dynamic> camera) {
         return CameraDescription(
           name: camera['name']! as String,
+          zoomType: parseCameraType(camera['type'] as String),
+          zoomValue: camera['zoomValue']! as double,
           lensDirection:
               parseCameraLensDirection(camera['lensFacing']! as String),
           sensorOrientation: camera['sensorOrientation']! as int,

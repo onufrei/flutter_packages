@@ -372,9 +372,9 @@ void main() {
       final List<PlatformCameraDescription> returnData =
           <PlatformCameraDescription>[
         PlatformCameraDescription(
-            name: 'Test 1', lensDirection: PlatformCameraLensDirection.front),
+            name: 'Test 1', zoomType: PlatformCameraZoomType.wide, zoomValue: 1.0, lensDirection: PlatformCameraLensDirection.front),
         PlatformCameraDescription(
-            name: 'Test 2', lensDirection: PlatformCameraLensDirection.back),
+            name: 'Test 2', zoomType: PlatformCameraZoomType.wide, zoomValue: 1.0, lensDirection: PlatformCameraLensDirection.back),
       ];
       when(mockApi.getAvailableCameras()).thenAnswer((_) async => returnData);
 

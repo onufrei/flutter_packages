@@ -4439,6 +4439,9 @@ public class GeneratedCameraXLibrary {
     Long getSupportedHardwareLevel(@NonNull Long identifier);
 
     @NonNull
+    double getSupportedMinZoomRatio(@NonNull Long identifier);
+
+    @NonNull
     String getCameraId(@NonNull Long identifier);
 
     @NonNull
@@ -4506,6 +4509,33 @@ public class GeneratedCameraXLibrary {
                 }
                 reply.reply(wrapped);
               });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+                new BasicMessageChannel<>(
+                        binaryMessenger,
+                        "dev.flutter.pigeon.Camera2CameraInfoHostApi.getSupportedMinZoomRatio",
+                        getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+                  (message, reply) -> {
+                    ArrayList<Object> wrapped = new ArrayList<Object>();
+                    ArrayList<Object> args = (ArrayList<Object>) message;
+                    Number identifierArg = (Number) args.get(0);
+                    try {
+                      double output =
+                              api.getSupportedMinZoomRatio(
+                                      (identifierArg == null) ? null : identifierArg.longValue());
+                      wrapped.add(0, output);
+                    } catch (Throwable exception) {
+                      ArrayList<Object> wrappedError = wrapError(exception);
+                      wrapped = wrappedError;
+                    }
+                    reply.reply(wrapped);
+                  });
         } else {
           channel.setMessageHandler(null);
         }

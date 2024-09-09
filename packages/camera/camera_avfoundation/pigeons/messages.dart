@@ -29,6 +29,12 @@ enum PlatformCameraLensDirection {
   external,
 }
 
+enum PlatformCameraZoomType {
+  wide,
+  telephoto,
+  ultrawide,
+}
+
 // Pigeon version of DeviceOrientation.
 enum PlatformDeviceOrientation {
   portraitUp,
@@ -83,11 +89,17 @@ enum PlatformResolutionPreset {
 class PlatformCameraDescription {
   PlatformCameraDescription({
     required this.name,
+    required this.zoomType,
+    required this.zoomValue,
     required this.lensDirection,
   });
 
   /// The name of the camera device.
   final String name;
+
+  final PlatformCameraZoomType zoomType;
+
+  final double zoomValue;
 
   /// The direction the camera is facing.
   final PlatformCameraLensDirection lensDirection;

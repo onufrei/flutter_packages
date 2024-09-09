@@ -152,16 +152,22 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FCPPlatformCameraDescription
 + (instancetype)makeWithName:(NSString *)name
+                zoomType:(FCPPlatformCameraZoomType)zoomType
+               zoomValue:(double)zoomValue
                lensDirection:(FCPPlatformCameraLensDirection)lensDirection {
   FCPPlatformCameraDescription *pigeonResult = [[FCPPlatformCameraDescription alloc] init];
   pigeonResult.name = name;
+  pigeonResult.zoomType = zoomType;
+  pigeonResult.zoomValue = zoomValue;
   pigeonResult.lensDirection = lensDirection;
   return pigeonResult;
 }
 + (FCPPlatformCameraDescription *)fromList:(NSArray *)list {
   FCPPlatformCameraDescription *pigeonResult = [[FCPPlatformCameraDescription alloc] init];
   pigeonResult.name = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.lensDirection = [GetNullableObjectAtIndex(list, 1) integerValue];
+  pigeonResult.zoomType = [GetNullableObjectAtIndex(list, 1) integerValue];
+  pigeonResult.zoomValue = [GetNullableObjectAtIndex(list, 2) doubleValue];
+  pigeonResult.lensDirection = [GetNullableObjectAtIndex(list, 3) integerValue];
   return pigeonResult;
 }
 + (nullable FCPPlatformCameraDescription *)nullableFromList:(NSArray *)list {
@@ -170,6 +176,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList {
   return @[
     self.name ?: [NSNull null],
+    @(self.zoomType),
+    @(self.zoomValue),
     @(self.lensDirection),
   ];
 }

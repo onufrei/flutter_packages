@@ -36,6 +36,8 @@ void main() {
         final int cameraId = await camera.createCameraWithSettings(
           const CameraDescription(
               name: 'Test',
+              zoomType: CameraZoomType.wide,
+              zoomValue: 1.0,
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0),
           const MediaSettings(
@@ -82,6 +84,8 @@ void main() {
           () => camera.createCameraWithSettings(
             const CameraDescription(
               name: 'Test',
+              zoomType: CameraZoomType.wide,
+              zoomValue: 1.0,
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0,
             ),
@@ -122,6 +126,8 @@ void main() {
           () => camera.createCameraWithSettings(
             const CameraDescription(
               name: 'Test',
+              zoomType: CameraZoomType.wide,
+              zoomValue: 1.0,
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0,
             ),
@@ -190,6 +196,8 @@ void main() {
         final int cameraId = await camera.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
+            zoomType: CameraZoomType.wide,
+            zoomValue: 1.0,
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
@@ -243,6 +251,8 @@ void main() {
         final int cameraId = await camera.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
+            zoomType: CameraZoomType.wide,
+            zoomValue: 1.0,
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
@@ -297,6 +307,8 @@ void main() {
         cameraId = await camera.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
+            zoomType: CameraZoomType.wide,
+            zoomValue: 1.0,
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
@@ -473,6 +485,8 @@ void main() {
         cameraId = await camera.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
+            zoomType: CameraZoomType.wide,
+            zoomValue: 1.0,
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
@@ -532,6 +546,8 @@ void main() {
               (returnData[i] as Map<dynamic, dynamic>).cast<String, Object?>();
           final CameraDescription cameraDescription = CameraDescription(
             name: typedData['name']! as String,
+            zoomType: CameraZoomType.wide,
+            zoomValue: 1.0,
             lensDirection:
                 parseCameraLensDirection(typedData['lensFacing']! as String),
             sensorOrientation: typedData['sensorOrientation']! as int,
@@ -630,6 +646,8 @@ void main() {
         // Act
         const CameraDescription cameraDescription = CameraDescription(
             name: 'Test',
+            zoomType: CameraZoomType.wide,
+            zoomValue: 1.0,
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0);
         await camera.setDescriptionWhileRecording(cameraDescription);

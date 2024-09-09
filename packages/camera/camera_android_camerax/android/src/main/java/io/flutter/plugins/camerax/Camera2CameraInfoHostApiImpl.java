@@ -14,6 +14,7 @@ import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import androidx.camera.core.CameraInfo;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.Camera2CameraInfoHostApi;
+import android.util.Range;
 import java.util.Objects;
 
 /**
@@ -52,6 +53,13 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
     public Long getSensorOrientation(@NonNull Camera2CameraInfo camera2CameraInfo) {
       return Long.valueOf(
           camera2CameraInfo.getCameraCharacteristic(CameraCharacteristics.SENSOR_ORIENTATION));
+    }
+
+    @NonNull
+    public double getSupportedMinZoomRatio(@NonNull Camera2CameraInfo camera2CameraInfo) {
+      Range<Float> zoomRanges = camera2CameraInfo.getCameraCharacteristic(
+              CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE);
+      return zoomRanges.getLower();
     }
   }
 
@@ -102,6 +110,12 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
   @NonNull
   public Long getSupportedHardwareLevel(@NonNull Long identifier) {
     return Long.valueOf(proxy.getSupportedHardwareLevel(getCamera2CameraInfoInstance(identifier)));
+  }
+
+  @Override
+  @NonNull
+  public double getSupportedMinZoomRatio(@NonNull Long identifier) {
+    return proxy.getSupportedMinZoomRatio(getCamera2CameraInfoInstance(identifier));
   }
 
   @Override

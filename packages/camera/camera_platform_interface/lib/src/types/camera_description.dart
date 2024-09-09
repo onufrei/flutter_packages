@@ -16,18 +16,35 @@ enum CameraLensDirection {
   external,
 }
 
+/// Zoom of the camera
+enum CameraZoomType {
+  /// Default camera type
+  wide,
+  /// Zoomed camera (2x, 3x, 5x)
+  telephoto,
+  /// UltraWide camera (0.5x)
+  ultrawide,
+}
+
 /// Properties of a camera device.
 @immutable
 class CameraDescription {
   /// Creates a new camera description with the given properties.
   const CameraDescription({
     required this.name,
+    required this.zoomType,
+    required this.zoomValue,
     required this.lensDirection,
     required this.sensorOrientation,
   });
 
   /// The name of the camera device.
   final String name;
+
+  /// Zoom of the camera
+  final CameraZoomType zoomType;
+
+  final double zoomValue;
 
   /// The direction the camera is facing.
   final CameraLensDirection lensDirection;
@@ -44,17 +61,19 @@ class CameraDescription {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CameraDescription &&
-          runtimeType == other.runtimeType &&
-          name == other.name &&
-          lensDirection == other.lensDirection;
+          other is CameraDescription &&
+              runtimeType == other.runtimeType &&
+              name == other.name &&
+              zoomType == other.zoomType &&
+              zoomValue == other.zoomValue &&
+              lensDirection == other.lensDirection;
 
   @override
-  int get hashCode => Object.hash(name, lensDirection);
+  int get hashCode => Object.hash(name, lensDirection, zoomType, zoomValue);
 
   @override
   String toString() {
     return '${objectRuntimeType(this, 'CameraDescription')}('
-        '$name, $lensDirection, $sensorOrientation)';
+        '$name, $zoomType, $zoomValue, $lensDirection, $sensorOrientation)';
   }
 }

@@ -2485,6 +2485,8 @@ abstract class TestCamera2CameraInfoHostApi {
 
   String getCameraId(int identifier);
 
+  double getSupportedMinZoomRatio(int identifiefr);
+
   int getSensorOrientation(int identifier);
 
   static void setup(TestCamera2CameraInfoHostApi? api,
@@ -2532,6 +2534,29 @@ abstract class TestCamera2CameraInfoHostApi {
           final int output = api.getSupportedHardwareLevel(arg_identifier!);
           return <Object?>[output];
         });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.Camera2CameraInfoHostApi.getSupportedMinZoomRatio',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+              assert(message != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraInfoHostApi.getSupportedMinZoomRatio was null.');
+              final List<Object?> args = (message as List<Object?>?)!;
+              final int? arg_identifier = (args[0] as int?);
+              assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraInfoHostApi.getSupportedMinZoomRatio was null, expected non-null int.');
+              final int output = api.getSupportedMinZoomRatio(arg_identifier!);
+              return <Object?>[output];
+            });
       }
     }
     {

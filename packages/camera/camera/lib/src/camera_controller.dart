@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
+import 'dart:io';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
@@ -442,6 +443,9 @@ class CameraController extends ValueNotifier<CameraValue> {
       }
 
       await _initializeWithDescription(description);
+      if (Platform.isAndroid) {
+        await setZoomLevel(description.zoomValue);
+      }
     }
   }
 
