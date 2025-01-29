@@ -8,9 +8,9 @@
 @import AVFoundation;
 @import Flutter;
 
-#import "./include/camera_avfoundation/CameraPermissionUtils.h"
 #import "./include/camera_avfoundation/CameraProperties.h"
 #import "./include/camera_avfoundation/FLTCam.h"
+#import "./include/camera_avfoundation/FLTCameraPermissionManager.h"
 #import "./include/camera_avfoundation/FLTThreadSafeEventChannel.h"
 #import "./include/camera_avfoundation/QueueUtils.h"
 #import "./include/camera_avfoundation/messages.g.h"
@@ -25,6 +25,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(readonly, nonatomic) id <FlutterTextureRegistry> registry;
 @property(readonly, nonatomic) NSObject <FlutterBinaryMessenger> *messenger;
 @property(nonatomic) FCPCameraGlobalEventApi *globalEventAPI;
+@property(readonly, nonatomic) FLTCameraPermissionManager *permissionManager;
 @end
 
 @implementation CameraPlugin
@@ -46,14 +47,19 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 - (instancetype)initWithRegistry:(NSObject <FlutterTextureRegistry> *)registry
                        messenger:(NSObject <FlutterBinaryMessenger> *)messenger
                        globalAPI:(FCPCameraGlobalEventApi *)globalAPI {
-    self = [super init];
-    NSAssert(self, @"super init cannot be nil");
-    _registry = registry;
-    _messenger = messenger;
-    _globalEventAPI = globalAPI;
-    _captureSessionQueue = dispatch_queue_create("io.flutter.camera.captureSessionQueue", NULL);
-    dispatch_queue_set_specific(_captureSessionQueue, FLTCaptureSessionQueueSpecific,
-                                (void *) FLTCaptureSessionQueueSpecific, NULL);
+  self = [super init];
+  NSAssert(self, @"super init cannot be nil");
+  _registry = registry;
+  _messenger = messenger;
+  _globalEventAPI = globalAPI;
+  _captureSessionQueue = dispatch_queue_create("io.flutter.camera.captureSessionQueue", NULL);
+
+  id<FLTPermissionServicing> permissionService = [[FLTDefaultPermissionService alloc] init];
+  _permissionManager =
+      [[FLTCameraPermissionManager alloc] initWithPermissionService:permissionService];
+
+  dispatch_queue_set_specific(_captureSessionQueue, FLTCaptureSessionQueueSpecific,
+                              (void *)FLTCaptureSessionQueueSpecific, NULL);
 
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -177,55 +183,46 @@ FlutterError *_Nullable
     });
 }
 
-- (void)createCameraWithName:(nonnull NSString
+- (void)createCameraWithName:(nonnull NSString *)cameraName
+                    settings:(nonnull FCPPlatformMediaSettings *)settings
+                  completion:
+                      (nonnull void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  // Create FLTCam only if granted camera access (and audio access if audio is enabled)
+  __weak typeof(self) weakSelf = self;
+  dispatch_async(self.captureSessionQueue, ^{
+    [self->_permissionManager requestCameraPermissionWithCompletionHandler:^(FlutterError *error) {
+      typeof(self) strongSelf = weakSelf;
+      if (!strongSelf) return;
 
-*)
-cameraName
-        settings
-:(
-nonnull FCPPlatformMediaSettings
-*)
-settings
-        completion
-:
-(nonnull void (^)(
-NSNumber *_Nullable, FlutterError
-*_Nullable))completion {
-    // Create FLTCam only if granted camera access (and audio access if audio is enabled)
-    __weak typeof(self) weakSelf = self;
-    dispatch_async(self.captureSessionQueue, ^{
-        FLTRequestCameraPermissionWithCompletionHandler(^(FlutterError *error) {
-            typeof(self) strongSelf = weakSelf;
-            if (!strongSelf) return;
-
-            if (error) {
-                completion(nil, error);
-            } else {
-                // Request audio permission on `create` call with `enableAudio` argument instead of the
-                // `prepareForVideoRecording` call. This is because `prepareForVideoRecording` call is
-                // optional, and used as a workaround to fix a missing frame issue on iOS.
-                if (settings.enableAudio) {
-                    // Setup audio capture session only if granted audio access.
-                    FLTRequestAudioPermissionWithCompletionHandler(^(FlutterError *error) {
-                        // cannot use the outter `strongSelf`
-                        typeof(self) strongSelf = weakSelf;
-                        if (!strongSelf) return;
-                        if (error) {
-                            completion(nil, error);
-                        } else {
-                            [strongSelf createCameraOnSessionQueueWithName:cameraName
-                                                                  settings:settings
-                                                                completion:completion];
-                        }
-                    });
+      if (error) {
+        completion(nil, error);
+      } else {
+        // Request audio permission on `create` call with `enableAudio` argument instead of the
+        // `prepareForVideoRecording` call. This is because `prepareForVideoRecording` call is
+        // optional, and used as a workaround to fix a missing frame issue on iOS.
+        if (settings.enableAudio) {
+          // Setup audio capture session only if granted audio access.
+          [self->_permissionManager
+              requestAudioPermissionWithCompletionHandler:^(FlutterError *error) {
+                // cannot use the outter `strongSelf`
+                typeof(self) strongSelf = weakSelf;
+                if (!strongSelf) return;
+                if (error) {
+                  completion(nil, error);
                 } else {
-                    [strongSelf createCameraOnSessionQueueWithName:cameraName
-                                                          settings:settings
-                                                        completion:completion];
+                  [strongSelf createCameraOnSessionQueueWithName:cameraName
+                                                        settings:settings
+                                                      completion:completion];
                 }
-            }
-        });
-    });
+              }];
+        } else {
+          [strongSelf createCameraOnSessionQueueWithName:cameraName
+                                                settings:settings
+                                              completion:completion];
+        }
+      }
+    }];
+  });
 }
 
 - (void)initializeCamera:(NSInteger)cameraId
@@ -276,12 +273,12 @@ FlutterError *_Nullable
 }
 
 - (void)prepareForVideoRecordingWithCompletion:
-        (nonnull void (^)(FlutterError *_Nullable))completion {
-    __weak typeof(self) weakSelf = self;
-    dispatch_async(self.captureSessionQueue, ^{
-        [weakSelf.camera setUpCaptureSessionForAudio];
-        completion(nil);
-    });
+    (nonnull void (^)(FlutterError *_Nullable))completion {
+  __weak typeof(self) weakSelf = self;
+  dispatch_async(self.captureSessionQueue, ^{
+    [weakSelf.camera setUpCaptureSessionForAudioIfNeeded];
+    completion(nil);
+  });
 }
 
 - (void)startVideoRecordingWithStreaming:(BOOL)enableStream
